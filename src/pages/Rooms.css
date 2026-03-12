@@ -1,0 +1,74 @@
+/* === ROOM PAGE === */
+.rooms-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(135deg, #141e30, #243b55); /* خلفية جذابة */
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Player Info */
+.player-info {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.5);
+  padding: 10px 15px;
+  border-radius: 12px;
+}
+
+.player-avatar {
+  font-size: 32px;
+}
+
+.player-name {
+  font-size: 18px;
+}
+
+/* Center buttons */
+.rooms-center {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Buttons */
+.create-btn {
+  width: 220px;
+  padding: 15px;
+  font-size: 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  background: #00eaff; /* أزرق */
+  color: black;
+}
+
+.create-btn:hover {
+  background: #00c8d6;
+}
+
+.join-btn {
+  width: 220px;
+  padding: 15px;
+  font-size: 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  background: #ff00e0; /* وردي */
+  color: white;
+}
+
+.join-btn:hover {
+  background: #c400a8;
+}
