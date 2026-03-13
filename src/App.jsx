@@ -32,20 +32,22 @@ socket.onmessage = (event) => {
         alert("⚠️ " + data.message);
       }
       break;
-        case "gameStarted":
-          setPlayer(prev => ({
-            ...prev,
-            word: data.word,
-            isSpy: data.isSpy
-          }));
-          setRoom(data.room);
-          setPage("gamePlay");
-          break;
-        case "error":
-          alert(data.message);
-          break;
-        default:
-          break;
+ case "gameStarted":
+  // 1. تحديث بيانات اللاعب أولاً
+  setPlayer(prev => ({
+    ...prev,
+    word: data.word,
+    isSpy: data.isSpy
+  }));
+  
+  // 2. تحديث الغرفة
+  setRoom(data.room);
+
+  // 3. تأخير بسيط جداً (50ms) عشان نضمن إن الـ State سمع
+  setTimeout(() => {
+    setPage("gamePlay");
+  }, 50). 
+  break;
       }
     };
   }, []); 
@@ -91,32 +93,49 @@ if (page === "setup") {
   if (page === "rooms") {
     return <Rooms player={player} onCreateRoom={() => setPage("createRoom")} onJoinRoom={() => setPage("joinRoom")} />;
   }
+
+
+
+
   
- if (page === "createRoom") {
+  
+if (page === "createRoom") {
   return (
     <div className="create-room-page">
       <div className="glass-card">
-        <h2 style={{color: 'var(--accent-color)'}}>ROOM SETTINGS</h2>
+        <h2 style={{color: 'var(--accent-color)'}}>إعدادات الغرفة</h2>
         <div className="input-group">
-          <label>ROUNDS</label>
-          <input type="number" defaultValue="5" id="room-rounds" />
+          <label>عدد الجولات (1 - 3)</label>
+          <input 
+            type="number" 
+            defaultValue="1" 
+            id="room-rounds" 
+            min="1" 
+            max="3" 
+            onInput={(e) => { if(e.target.value > 3) e.target.value = 3; if(e.target.value < 1) e.target.value = 1; }}
+          />
           
-          <label>MAX PLAYERS</label>
-          <input type="number" defaultValue="6" id="room-max" />
+          <label>أقصى عدد لاعبين (3 - 10)</label>
+          <input 
+            type="number" 
+            defaultValue="6" 
+            id="room-max" 
+            min="3" 
+            max="10" 
+            onInput={(e) => { if(e.target.value > 10) e.target.value = 10; if(e.target.value < 3) e.target.value = 3; }}
+          />
         </div>
         <button className="game-btn primary-btn" onClick={() => {
-          const config = {
-            rounds: document.getElementById("room-rounds").value,
-            maxPlayers: document.getElementById("room-max").value,
-          };
-          handleCreateRoom(config);
-        }}>Create Room</button>
-        <button className="game-btn secondary-btn" onClick={() => setPage("rooms")}>Cancel</button>
+          const rounds = parseInt(document.getElementById("room-rounds").value);
+          const maxPlayers = parseInt(document.getElementById("room-max").value);
+          
+          handleCreateRoom({ rounds, maxPlayers });
+        }}>إنشاء الغرفة</button>
+        <button className="game-btn secondary-btn" onClick={() => setPage("rooms")}>إلغاء</button>
       </div>
     </div>
   );
 }
-
 
 
 
