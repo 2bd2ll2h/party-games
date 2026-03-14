@@ -1,10 +1,15 @@
 const WebSocket = require("ws");
 
-const wss = new WebSocket.Server({ port: 5000 });
 
 
 
 
+const PORT = process.env.PORT || 8080; // Back4app بيستخدم بورت متغير
+const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+const wss = new WebSocket.Server({ server });
 
 
 
