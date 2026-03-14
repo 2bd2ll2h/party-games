@@ -180,11 +180,7 @@ background:#00c6d6;
 }
 
 /* تأكد إن الـ setup-card واخد flex-direction: column عشان العناصر تترتب تحت بعض */
-.setup-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+
 /* الكارت في النص */
 .setup-card {
   width: 90%;
@@ -199,12 +195,7 @@ background:#00c6d6;
 }
 
 /* Grid الافاتار - نرجعه Grid */
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 في كل صف */
-  gap: 10px;
-  margin-bottom: 25px;
-}
+
 
 /* زرار Back المربع اللي تحت Continue */
 .back-btn-square {
