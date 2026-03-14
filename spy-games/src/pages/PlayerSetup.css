@@ -185,3 +185,42 @@ background:#00c6d6;
   flex-direction: column;
   align-items: center;
 }
+/* الكارت في النص */
+.setup-card {
+  width: 90%;
+  max-width: 500px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(15px);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6), 0 0 30px #00eaff;
+  text-align: center;
+  position: relative; /* عشان نضمن ترتيب العناصر */
+}
+
+/* Grid الافاتار - نرجعه Grid */
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 في كل صف */
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+/* زرار Back المربع اللي تحت Continue */
+.back-btn-square {
+  display: block;
+  margin: 15px auto 0; /* يتوسط تحت زرار Continue */
+  width: 100px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn-square:hover {
+  background: #ff4d4d;
+}

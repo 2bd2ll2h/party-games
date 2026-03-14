@@ -81,6 +81,26 @@
 
 
 
+.back-btn-large-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 12px 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff4757;
+  color: #ff4757;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn-large-top:hover {
+  background: #ff4757;
+  color: white;
+}
+
 
 
 

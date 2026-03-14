@@ -129,9 +129,17 @@ if (page === "setup") {
   
 if (page === "createRoom") {
   return (
+ 
     <div className="create-room-page">
       <div className="glass-card">
-        <button className="back-btn-mini" onClick={() => setPage("rooms")}>← Back</button>
+      
+
+
+
+
+
+
+      
         <h2 style={{color: 'var(--accent-color)'}}> ROOM SETTING </h2>
         <div className="input-group">
           <label>Round Numbers(1 - 3)</label>
