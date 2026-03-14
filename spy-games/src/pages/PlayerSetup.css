@@ -18,6 +18,9 @@ color:white;
 
 .setup-card{
 
+
+
+  
 width:90%;
 max-width:500px;
 
@@ -150,26 +153,29 @@ background:#00c6d6;
 
 }
 
+.continue-btn {
+  margin-bottom: 15px !important; /* مسافة لزرار الباك */
+}
 
-.back-btn-mini {
-  position: absolute;
-  top: 15px;
-  left: 15px;
+.back-btn-small {
+  display: inline-block; /* خليه Inline عشان يتحكم في عرضه */
+  width: 60px;
+  height: 40px; /* خليه شبه مربع */
+  padding: 5px;
+  margin-top: 5px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 5px 12px;
+  color: #ccc;
   border-radius: 8px;
-  cursor: pointer;
   font-size: 12px;
-  transition: 0.3s;
+  cursor: pointer;
 }
 
-.back-btn-mini:hover {
+.back-btn-small:hover {
   background: #ff4d4d;
+  color: white;
   border-color: #ff4d4d;
 }
-
 /* تأكد إن الكارت واخد position: relative عشان الزرار يتظبط جواه */
 .setup-card, .glass-card {
   position: relative;
