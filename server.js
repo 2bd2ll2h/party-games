@@ -1,22 +1,18 @@
 const WebSocket = require("ws");
+const http = require("http");
 
+// 1. تحديد البورت (Back4app بيستخدم بورت متغير، وإنت في الـ Dockerfile محدد 5000)
+// السطر ده بيخلي السيرفر يشتغل على أي بورت تطلبه المنصة
+const PORT = process.env.PORT || 5000; 
 
-
-
-
-const PORT = process.env.PORT || 8080; // Back4app بيستخدم بورت متغير
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// 2. إنشاء سيرفر HTTP بسيط جداً (عشان الـ Health Check ينجح)
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Spy Game Server is Running...');
 });
 
+// 3. ربط الـ WebSocket بنفس السيرفر
 const wss = new WebSocket.Server({ server });
-
-
-
-
-
-
-
 
 
 
@@ -296,4 +292,15 @@ function processResults(roomId) {
   });
 }
 
-console.log("Server running on ws://localhost:5000");
+
+
+
+
+
+
+
+
+
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
