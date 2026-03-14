@@ -24,8 +24,10 @@ function Rooms({ player, onCreateRoom, onJoinRoom }) {
 
 
 
-      
-<button className="back-to-menu" onClick={() => window.location.reload()}>Logout / Exit</button>
+
+
+
+<button className="back-btn-mini" onClick={onBack}>← Back</button>
 
 
 

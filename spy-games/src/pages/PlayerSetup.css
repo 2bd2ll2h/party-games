@@ -149,3 +149,28 @@ transition:0.3s;
 background:#00c6d6;
 
 }
+
+
+.back-btn-mini {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.3s;
+}
+
+.back-btn-mini:hover {
+  background: #ff4d4d;
+  border-color: #ff4d4d;
+}
+
+/* تأكد إن الكارت واخد position: relative عشان الزرار يتظبط جواه */
+.setup-card, .glass-card {
+  position: relative;
+}
