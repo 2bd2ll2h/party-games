@@ -12,6 +12,11 @@ const handleJoin = () => {
     onJoin(idInput); // دي اللي بتبعت للسيرفر من App.js
   }
 };
+
+
+
+
+
   return (
     <div className="join-room-page">
       <div className="join-card">

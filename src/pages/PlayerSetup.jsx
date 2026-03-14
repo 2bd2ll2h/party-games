@@ -96,9 +96,23 @@ Continue
 
 </div>
 
+// داخل return في PlayerSetup.js
+<div className="setup-card">
+    <button className="back-btn-mini" onClick={() => window.location.reload()}>Back</button> 
+    <h2>Choose Avatar</h2>
+    {/* باقي الكود... */}
+</div>
+
+
+
+
+
 
 
 </div>
+
+
+
 
 
 

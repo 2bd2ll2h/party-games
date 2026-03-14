@@ -679,7 +679,43 @@ input:focus {
   transform: scale(0.95);
 }
 
+/* زر العودة الصغير في زاوية الكارت */
+.back-btn-mini {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #ff4757;
+  color: #ff4757;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
 
+/* زر الطرد (Kick) */
+.kick-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+  z-index: 10;
+}
+
+.player-card {
+  position: relative; /* مهم عشان زر الطرد يثبت فوق الكارت */
+}
 
 
 

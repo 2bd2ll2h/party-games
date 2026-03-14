@@ -3,7 +3,9 @@ import "./Rooms.css";
 function Rooms({ player, onCreateRoom, onJoinRoom }) {
   return (
     <div className="rooms-page">
+
       {/* Player Info */}
+
       <div className="player-info">
         <span className="player-avatar">{player.avatar}</span>
         <span className="player-name">{player.name}</span>
@@ -18,6 +20,20 @@ function Rooms({ player, onCreateRoom, onJoinRoom }) {
           Join Room
         </button>
       </div>
+
+
+
+
+      
+<button className="back-to-menu" onClick={() => window.location.reload()}>Logout / Exit</button>
+
+
+
+
+
+
+
+      
     </div>
   );
 }

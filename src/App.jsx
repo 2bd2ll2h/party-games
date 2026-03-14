@@ -4,8 +4,8 @@ import Rooms from "./pages/Rooms";
 import JoinRoomPage from "./pages/JoinRoomPage";
 import GamePlay from "./pages/GamePlay"; 
 import "./App.css";
-
-const socket = new WebSocket("ws://localhost:5000");
+// استبدل السطر القديم بالسطر ده
+const socket = new WebSocket("wss://partygames-2hh2887f.b4a.run");
 
 function App() {
   const [page, setPage] = useState("menu");
@@ -32,6 +32,16 @@ socket.onmessage = (event) => {
         alert("⚠️ " + data.message);
       }
       break;
+
+
+
+
+      
+      case "kicked":
+  alert("❌ لقد تم طردك من الغرفة!");
+  setRoom(null);
+  setPage("rooms");
+  break;
  case "gameStarted":
   // 1. تحديث بيانات اللاعب أولاً
   setPlayer(prev => ({
@@ -49,7 +59,17 @@ socket.onmessage = (event) => {
   }, 50). 
   break;
       }
+
+
+
+
     };
+
+
+
+
+
+
   }, []); 
 
   const handleCreateRoom = (roomSettings) => {
@@ -103,9 +123,10 @@ if (page === "createRoom") {
   return (
     <div className="create-room-page">
       <div className="glass-card">
-        <h2 style={{color: 'var(--accent-color)'}}>إعدادات الغرفة</h2>
+        <button className="back-btn-mini" onClick={() => setPage("rooms")}>← Back</button>
+        <h2 style={{color: 'var(--accent-color)'}}> ROOM SETTING </h2>
         <div className="input-group">
-          <label>عدد الجولات (1 - 3)</label>
+          <label>Round Numbers(1 - 3)</label>
           <input 
             type="number" 
             defaultValue="1" 
@@ -115,7 +136,7 @@ if (page === "createRoom") {
             onInput={(e) => { if(e.target.value > 3) e.target.value = 3; if(e.target.value < 1) e.target.value = 1; }}
           />
           
-          <label>أقصى عدد لاعبين (3 - 10)</label>
+          <label>Max players (3 - 10)</label>
           <input 
             type="number" 
             defaultValue="6" 
@@ -130,8 +151,8 @@ if (page === "createRoom") {
           const maxPlayers = parseInt(document.getElementById("room-max").value);
           
           handleCreateRoom({ rounds, maxPlayers });
-        }}>إنشاء الغرفة</button>
-        <button className="game-btn secondary-btn" onClick={() => setPage("rooms")}>إلغاء</button>
+        }}> Create ROOM </button>
+        <button className="game-btn secondary-btn" onClick={() => setPage("rooms")}> Cancel </button>
       </div>
     </div>
   );
@@ -233,7 +254,19 @@ if (page === "lobby") {
 
           if (p.isReady) avatarBg = "rgba(34, 197, 94, 0.5)"; // لون اللي استعد (أخضر)
 
-
+{isThisPlayerOwner && !isThisPlayerMe && (
+  <button 
+    className="kick-btn" 
+    onClick={() => socket.send(JSON.stringify({ 
+      type: "kickPlayer", 
+      roomId: room.id, 
+      adminName: player.name, 
+      targetName: p.name 
+    }))}
+  >
+    ➖
+  </button>
+)}
 
           return (
 

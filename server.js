@@ -112,7 +112,8 @@ wss.on("connection", (ws) => {
                 const isSpy = client.playerName === spyName;
                 client.send(JSON.stringify({
                   type: "gameStarted",
-                  word: isSpy ? "أنت الجاسوس 🕵️" : selectedWord,
+                  
+                  word: isSpy ? " you  are the spy 🕵️" : selectedWord,
                   isSpy: isSpy,
                   room: roomToStart,
                   turnOrder: turnOrder 
@@ -133,6 +134,32 @@ wss.on("connection", (ws) => {
             }
           });
           break;
+
+
+
+
+
+
+
+
+
+
+
+
+          case "kickPlayer":
+  const roomToKick = rooms[data.roomId];
+  if (roomToKick && roomToKick.owner === data.adminName) {
+    roomToKick.players = roomToKick.players.filter(p => p.name !== data.targetName);
+    broadcastToRoom(data.roomId, { type: "roomUpdate", room: roomToKick });
+    // إرسال تنبيه للشخص المطرود
+    wss.clients.forEach(client => {
+      if (client.roomId === data.roomId && client.playerName === data.targetName) {
+        client.send(JSON.stringify({ type: "kicked" }));
+        client.roomId = null; // فصله عن الغرفة
+      }
+    });
+  }
+  break;
 
     // 1. تعديل منطق الانتقال للتصويت تلقائياً
 case "nextTurn":
