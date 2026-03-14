@@ -34,7 +34,7 @@ return(
 
 <div className="setup-card">
 
-<button className="back-btn-mini" onClick={() => window.location.reload()}>← Back</button>
+
 
 <h2>Choose Avatar</h2>
 
@@ -97,12 +97,20 @@ Continue
 </div>
 
 
-
+<button className="back-btn-small" onClick={() => window.location.reload()}>
+    Back
+  </button>
 
 
 
 
 </div>
+
+
+
+
+
+
 
 
 

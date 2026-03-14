@@ -151,25 +151,25 @@ background:#00c6d6;
 }
 
 
-.back-btn-mini {
-  position: absolute;
-  top: 15px;
-  left: 15px;
+.back-btn-small {
+  display: block;
+  margin: 0 auto; /* يتوسط الصفحة */
+  width: 60px;    /* عرض صغير */
+  padding: 8px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 5px 12px;
+  color: #ccc;
   border-radius: 8px;
-  cursor: pointer;
   font-size: 12px;
+  cursor: pointer;
   transition: 0.3s;
 }
 
-.back-btn-mini:hover {
+.back-btn-small:hover {
   background: #ff4d4d;
+  color: white;
   border-color: #ff4d4d;
 }
-
 /* تأكد إن الكارت واخد position: relative عشان الزرار يتظبط جواه */
 .setup-card, .glass-card {
   position: relative;
