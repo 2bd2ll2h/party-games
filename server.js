@@ -21,9 +21,19 @@ const wss = new WebSocket.Server({ server });
 
 
 
+
+
+
+
+
 // بنك الكلمات
 const wordsBank = ["بيتزا", "طيارة", "موبايل", "كورة", "قهوة", "مستشفى"];
 let rooms = {};
+
+
+
+
+
 
 
 
