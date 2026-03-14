@@ -111,20 +111,15 @@ if (page === "setup") {
   );
 }
   if (page === "rooms") {
-    return  ( <Rooms player={player} onCreateRoom={() => setPage("createRoom")} onJoinRoom={() => setPage("joinRoom")}  
-
-
-
-
-
-    
-
-  onBack={() => setPage("setup")} // 🚀 هنا خليناه يرجع لصفحة الـ setup
+  return (
+    <Rooms 
+      player={player} 
+      onCreateRoom={() => setPage("createRoom")} 
+      onJoinRoom={() => setPage("joinRoom")} 
+      onBack={() => setPage("setup")} 
     />
   );
 }
-
-
 
 
 

@@ -1,17 +1,15 @@
 import "./Rooms.css";
 
-function Rooms({ player, onCreateRoom, onJoinRoom }) {
+function Rooms({ player, onCreateRoom, onJoinRoom, onBack }) {
   return (
     <div className="rooms-page">
-
-      {/* Player Info */}
-
+      {/* معلومات اللاعب */}
       <div className="player-info">
         <span className="player-avatar">{player.avatar}</span>
         <span className="player-name">{player.name}</span>
       </div>
 
-      {/* Center buttons */}
+      {/* زراير التحكم */}
       <div className="rooms-center">
         <button className="create-btn" onClick={onCreateRoom}>
           Create Room
@@ -21,21 +19,8 @@ function Rooms({ player, onCreateRoom, onJoinRoom }) {
         </button>
       </div>
 
-
-
-
-
-
-
-<button className="back-btn-mini" onClick={onBack}>← Back</button>
-
-
-
-
-
-
-
-      
+      {/* زرار الرجوع */}
+     <button className="back-btn-mini" onClick={onBack}>← Back</button>
     </div>
   );
 }
