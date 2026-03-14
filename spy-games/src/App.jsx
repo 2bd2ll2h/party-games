@@ -5,7 +5,7 @@ import JoinRoomPage from "./pages/JoinRoomPage";
 import GamePlay from "./pages/GamePlay"; 
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
-const socket = new WebSocket("wss://partygames-2hh2887f.b4a.run");
+const socket = new WebSocket("wss://partygames-siup6ywr.b4a.run");
 
 function App() {
   const [page, setPage] = useState("menu");
@@ -110,17 +110,16 @@ if (page === "setup") {
     />
   );
 }
-  if (page === "rooms") {
+ if (page === "rooms") {
   return (
     <Rooms 
       player={player} 
       onCreateRoom={() => setPage("createRoom")} 
       onJoinRoom={() => setPage("joinRoom")} 
-      onBack={() => setPage("setup")} 
+      onBack={() => setPage("setup")} // بيرجعك لصفحة الاسم والأفاتار
     />
   );
 }
-
 
 
 
