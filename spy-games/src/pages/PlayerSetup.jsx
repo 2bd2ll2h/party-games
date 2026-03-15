@@ -80,6 +80,9 @@ onChange={(e)=>setName(e.target.value)}
 
 
 
+
+
+
 <button
 
 disabled={!name || !avatar}

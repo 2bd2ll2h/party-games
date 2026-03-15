@@ -79,7 +79,8 @@ socket.onmessage = (event) => {
     socket.send(JSON.stringify({ 
       type: "createRoom", 
       player, 
-      config: roomSettings 
+      config: roomSettings ,
+      gameType: gameType
     }));
   };
 
@@ -212,7 +213,43 @@ if (page === "lobby") {
 
   const playersCount = room.players.length;
 
+if (!room || !player) return <div>Loading...</div>;
 
+  // لو اللعبة هي Code Game، نعرض اللوبي الجديدة
+  if (gameType === "codenames") {
+    return (
+      <div className="lobby-wrapper codenames">
+          {/* هنا طبق كود الـ Teams (يمين وشمال) اللي شرحناه سابقاً */}
+          {/* سأختصر لك الكود هنا لسهولة النسخ */}
+          <div className="teams-grid">
+             <div className="team-column red">
+                <h3>🔴 Red Team</h3>
+                {room.players.filter(p => p.team === "red").map(p => (
+                   <div key={p.name}>{p.name} {p.name === room.owner && "👑"}</div>
+                ))}
+             </div>
+             
+             <div className="waiting-section">
+                <h3>Waiting List</h3>
+                {room.players.filter(p => !p.team).map(p => (
+                   <div key={p.name}>
+                     {p.name}
+                     {player.name === room.owner && <button onClick={() => socket.send(JSON.stringify({type: "assignBlueLeader", roomId: room.id, adminName: player.name, targetName: p.name}))}>Make Blue Leader</button>}
+                   </div>
+                ))}
+             </div>
+
+             <div className="team-column blue">
+                <h3>🔵 Blue Team</h3>
+                {room.players.filter(p => p.team === "blue").map(p => (
+                   <div key={p.name}>{p.name} {p.name === room.blueOwner && "⭐"}</div>
+                ))}
+             </div>
+          </div>
+          {player.name === room.owner && <button onClick={handleStartGame}>START CODE GAME</button>}
+      </div>
+    );
+  }
 
   const handleStartWithValidation = () => {
 
@@ -251,6 +288,65 @@ if (page === "lobby") {
         <p className="room-id-tag">ROOM ID: {room.id}</p>
 
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
