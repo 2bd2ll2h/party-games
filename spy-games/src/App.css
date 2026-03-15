@@ -740,5 +740,14 @@ input:focus {
 .setup-card, .glass-card {
   position: relative;
 }
+.game-card.codenames {
+  border: 2px solid #eab308; /* لون ذهبي */
+  transition: 0.3s;
+}
 
+.game-card.codenames:hover {
+  background: rgba(234, 179, 8, 0.1);
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+  transform: translateY(-5px);
+}
 

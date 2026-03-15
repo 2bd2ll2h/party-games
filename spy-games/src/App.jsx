@@ -3,9 +3,11 @@ import PlayerSetup from "./pages/PlayerSetup";
 import Rooms from "./pages/Rooms";
 import JoinRoomPage from "./pages/JoinRoomPage";
 import GamePlay from "./pages/GamePlay"; 
+import CodenamesGame from "./pages/Codenames/CodenamesGame"; // تأكد من المسار
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
-const socket = new WebSocket("wss://partygames-2hh2887f.b4a.run");
+const socket = new WebSocket("wss://partygames-siup6ywr.b4a.run");
+const [gameType, setGameType] = useState(null); // 'spy' or 'codenames'
 
 function App() {
   const [page, setPage] = useState("menu");
@@ -110,22 +112,16 @@ if (page === "setup") {
     />
   );
 }
-  if (page === "rooms") {
-    return  ( <Rooms player={player} onCreateRoom={() => setPage("createRoom")} onJoinRoom={() => setPage("joinRoom")}  
-
-
-
-
-
-    
-
-  onBack={() => setPage("setup")} // 🚀 هنا خليناه يرجع لصفحة الـ setup
+ if (page === "rooms") {
+  return (
+    <Rooms 
+      player={player} 
+      onCreateRoom={() => setPage("createRoom")} 
+      onJoinRoom={() => setPage("joinRoom")} 
+      onBack={() => setPage("setup")} // بيرجعك لصفحة الاسم والأفاتار
     />
   );
 }
-
-
-
 
 
 
@@ -134,9 +130,17 @@ if (page === "setup") {
   
 if (page === "createRoom") {
   return (
+ 
     <div className="create-room-page">
       <div className="glass-card">
-        <button className="back-btn-mini" onClick={() => setPage("rooms")}>← Back</button>
+      
+
+
+
+
+
+
+      
         <h2 style={{color: 'var(--accent-color)'}}> ROOM SETTING </h2>
         <div className="input-group">
           <label>Round Numbers(1 - 3)</label>
@@ -330,18 +334,24 @@ if (page === "lobby") {
   );
 }
 
-  if (page === "gamePlay") return <GamePlay room={room} player={player} socket={socket} />;
-
+if (page === "gamePlay") {
+  if (gameType === "spy") return <GamePlay room={room} player={player} socket={socket} />;
+  if (gameType === "codenames") return <CodenamesGame room={room} player={player} socket={socket} />;
+}
   // الصفحة الرئيسية (Menu)
   return (
     <div className="container">
       <h1>🎮 Online Party Games</h1>
       <div className="games-grid">
-        <div className="game-card spy" onClick={() => setPage("setup")}>
-          🕵️
-          <h2>Spy Game</h2>
-        </div>
-        <div className="game-card disabled">🎮<h2>Coming Soon</h2></div>
+<div className="game-card spy" onClick={() => { setGameType("spy"); setPage("setup"); }}>
+  🕵️
+  <h2>Spy Game</h2>
+</div>
+
+<div className="game-card codenames" onClick={() => { setGameType("codenames"); setPage("setup"); }}>
+  🔑
+        <h2>  code game </h2>
+      </div>
         <div className="game-card disabled">🎮<h2>Coming Soon</h2></div>
         <div className="game-card disabled">🎮<h2>Coming Soon</h2></div>
       </div>

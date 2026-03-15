@@ -1,0 +1,26 @@
+.cn-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* أهم سطر للشبكة */
+  gap: 10px;
+  padding: 15px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.cn-card {
+  height: 80px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+/* الألوان */
+.cn-card.red { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+.cn-card.blue { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+.cn-card.black { background: #000; box-shadow: 0 0 15px #ff0000; }

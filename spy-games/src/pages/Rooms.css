@@ -81,6 +81,96 @@
 
 
 
+.back-btn-large-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 12px 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff4757;
+  color: #ff4757;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn-large-top:hover {
+  background: #ff4757;
+  color: white;
+}
+
+
+
+/* الحاوية اللي بتجمع الزرار والبيانات */
+.top-left-nav {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center; /* يخليهم على خط واحد بالعرض */
+  gap: 15px; /* مسافة بين الزرار والاسم */
+}
+
+/* زرار الباك المربع المودرن */
+.back-btn-square-nav {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff4757;
+  color: #ff4757;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn-square-nav:hover {
+  background: #ff4757;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+}
+
+/* شكل بيانات اللاعب اللي جنب الزرار */
+.player-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 15px;
+  border-radius: 12px;
+  height: 40px; /* أقصر شوية من الزرار عشان يبقى شكله أشيك */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+
+
+
+
+.player-avatar {
+  font-size: 24px;
+}
+
+
+
+
+
+
+.player-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+}
+
+
+
 
 
 

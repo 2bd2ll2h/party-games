@@ -94,19 +94,14 @@ Continue
 
 
 
-<button className="back-btn-small" onClick={() => window.location.reload()}>
+
+<button className="back-btn-square" onClick={() => window.location.reload()}>
           Back
         </button>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
 
 
 

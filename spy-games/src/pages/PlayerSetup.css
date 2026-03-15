@@ -157,26 +157,61 @@ background:#00c6d6;
   margin-bottom: 15px !important; /* مسافة لزرار الباك */
 }
 
-.back-btn-small {
-  display: inline-block; /* خليه Inline عشان يتحكم في عرضه */
-  width: 60px;
-  height: 40px; /* خليه شبه مربع */
-  padding: 5px;
-  margin-top: 5px;
+/* الزرار المربع الجديد */
+.back-btn-square {
+  width: 80px;            /* عرض مناسب للمربع */
+  height: 45px;           /* ارتفاع يخليه متناسق */
+  margin-top: 15px;       /* مسافة عن زر Continue */
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ccc;
-  border-radius: 8px;
-  font-size: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 10px;    /* حواف خفيفة عشان يبقى مودرن */
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
+  display: inline-block;  /* عشان يقبل الـ width */
 }
 
-.back-btn-small:hover {
+.back-btn-square:hover {
   background: #ff4d4d;
-  color: white;
   border-color: #ff4d4d;
+  box-shadow: 0 0 10px #ff4d4d;
 }
-/* تأكد إن الكارت واخد position: relative عشان الزرار يتظبط جواه */
-.setup-card, .glass-card {
-  position: relative;
+
+/* تأكد إن الـ setup-card واخد flex-direction: column عشان العناصر تترتب تحت بعض */
+
+/* الكارت في النص */
+.setup-card {
+  width: 90%;
+  max-width: 500px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(15px);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6), 0 0 30px #00eaff;
+  text-align: center;
+  position: relative; /* عشان نضمن ترتيب العناصر */
+}
+
+/* Grid الافاتار - نرجعه Grid */
+
+
+/* زرار Back المربع اللي تحت Continue */
+.back-btn-square {
+  display: block;
+  margin: 15px auto 0; /* يتوسط تحت زرار Continue */
+  width: 100px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn-square:hover {
+  background: #ff4d4d;
 }
