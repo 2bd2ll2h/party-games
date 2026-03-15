@@ -7,12 +7,13 @@ import CodenamesGame from "./pages/Codenames/CodenamesGame"; // تأكد من ا
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
 const socket = new WebSocket("wss://partygames-siup6ywr.b4a.run");
-const [gameType, setGameType] = useState(null); // 'spy' or 'codenames'
+
 
 function App() {
   const [page, setPage] = useState("menu");
   const [player, setPlayer] = useState(null);
   const [room, setRoom] = useState(null);
+  const [gameType, setGameType] = useState(null); // 'spy' or 'codenames'
 
   useEffect(() => {
 socket.onmessage = (event) => {
