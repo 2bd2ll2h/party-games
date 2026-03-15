@@ -3,7 +3,7 @@ import PlayerSetup from "./pages/PlayerSetup";
 import Rooms from "./pages/Rooms";
 import JoinRoomPage from "./pages/JoinRoomPage";
 import GamePlay from "./pages/GamePlay"; 
-import CodenamesGame from "./pages/Codenames/CodenamesGame"; // تأكد من المسار
+import CodenamesGame from "./pages/Codenames/codenames";
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
 const socket = new WebSocket("wss://partygames-siup6ywr.b4a.run");
