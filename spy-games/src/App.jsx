@@ -376,21 +376,24 @@ if (!room || !player) return <div>Loading...</div>;
 
 
 
-          return (
-
-            <div key={i} className={`player-card ${p.isReady ? "ready-mode" : ""}`}>
-              {isThisPlayerOwner && !isThisPlayerMe && (
-  <button 
-    className="kick-btn" 
-    onClick={() => socket.send(JSON.stringify({ 
-      type: "kickPlayer", 
-      roomId: room.id, 
-      adminName: player.name, 
-      targetName: p.name 
-    }))}
-  >
-    ➖
-  </button>
+     return (
+            <div 
+              key={i} 
+              className={`player-card ${p.isReady ? "ready-mode" : ""} ${isThisPlayerOwner ? "owner-card" : ""}`}
+            >
+              {/* زر الطرد: يظهر للأونر فقط، وعلى اللاعبين الآخرين فقط */}
+              {isOwner && !isThisPlayerMe && (
+                <button 
+                  className="kick-btn" 
+                  onClick={() => socket.send(JSON.stringify({ 
+                    type: "kickPlayer", 
+                    roomId: room.id, 
+                    adminName: player.name, 
+                    targetName: p.name 
+                  }))}
+                >
+                  ➖
+                </button>
 )}
 
               <div className="avatar-box" style={{ backgroundColor: avatarBg, borderRadius: '50%', padding: '10px' }}>
