@@ -235,3 +235,126 @@
 }
 
 
+/* حل مشكلة انعكاس العربي في بعض المتصفحات */
+input, .msg-bubble {
+  direction: rtl;
+  unicode-bidi: plaintext;
+  text-align: right;
+}
+
+/* تصميم الموبايل (Responsive) */
+@media (max-width: 768px) {
+  .gameplay-container {
+    flex-direction: column; /* السايد بار فوق والشات تحت */
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 2px solid #00eaff;
+    flex-direction: row;
+    overflow-x: auto; /* عرض اللاعبين بشكل أفقي */
+    padding: 10px;
+  }
+
+  .player-list {
+    display: flex;
+    gap: 10px;
+  }
+
+  .player-item {
+    margin-bottom: 0;
+    min-width: 100px;
+    font-size: 0.8rem;
+  }
+
+  .chat-section {
+    height: 60vh; /* تصغير مساحة الشات لإعطاء مساحة للوحة المفاتيح */
+  }
+
+  .msg-bubble {
+    max-width: 85%; /* زيادة عرض الرسالة في الموبايل */
+  }
+}
+
+/* كارت الأونر نيون أزرق */
+.player-card.owner-card {
+  border: 2px solid #00d2ff;
+  box-shadow: 0 0 15px #00d2ff;
+  background: rgba(0, 210, 255, 0.1);
+}
+
+/* حل مشكلة الكتابة العربية المعكوسة */
+input, .msg-bubble, .player-name {
+  direction: rtl;
+  unicode-bidi: plaintext;
+  text-align: right;
+}
+
+/* كارت الأونر نيون أزرق في اللوبي */
+.owner-card {
+  border: 2px solid #00eaff !important;
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.5) !important;
+}
+
+/* تصميم الموبايل */
+@media (max-width: 768px) {
+  .gameplay-container {
+    flex-direction: column;
+    height: calc(100vh - 60px);
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 80px;
+    border-right: none;
+    border-bottom: 1px solid #00eaff;
+    flex-direction: row;
+    padding: 5px;
+  }
+
+  .player-list {
+    display: flex;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .player-item {
+    min-width: 80px;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 12px;
+  }
+
+  .chat-section {
+    flex: 1;
+  }
+
+  .msg-bubble {
+    max-width: 90%;
+    font-size: 14px;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #0b161a;
+  }
+}
+
+/* زر الحذف (-) للأونر في اللوبي */
+.kick-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 20;
+}

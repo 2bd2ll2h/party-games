@@ -6,7 +6,7 @@ import GamePlay from "./pages/GamePlay";
 import CodenamesGame from "./pages/Codenames";
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
-const socket = new WebSocket("wss://partygames-7sct3ihl.b4a.run");
+const socket = new WebSocket("wss://partygames-fym3ifo6.b4a.run");
 
 
 function App() {
@@ -14,17 +14,22 @@ function App() {
   const [player, setPlayer] = useState(null);
   const [room, setRoom] = useState(null);
   const [gameType, setGameType] = useState(null); // 'spy' or 'codenames'
-
+const copyRoomId = () => {
+    navigator.clipboard.writeText(room.id);
+    alert("تم نسخ الكود: " + room.id);
+  };
   useEffect(() => {
 socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
   
   switch (data.type) {
     case "roomCreated":
-    case "roomUpdate":
-      setRoom(data.room);
-      setPage("lobby");
-      break;
+   case "roomUpdate":
+  setRoom(data.room);
+  if (!data.room.gameStarted) {
+    setPage("lobby"); // لو السيرفر بعت إن اللعبة مش بدأت، يرجعه اللوبي فوراً
+  }
+  break;
 
     case "error":
       // لو الرسالة فيها كلمة "الاسم"، نرجعه لصفحة الـ setup
@@ -279,15 +284,16 @@ if (!room || !player) return <div>Loading...</div>;
 
     <div className="lobby-wrapper">
 
-      <div className="lobby-header glass-card">
+    <div className="lobby-header glass-card">
+  <h2 className="neon-text">SPY LOBBY</h2>
+  <p>Players: {playersCount} / {room.config?.maxPlayers || 6}</p>
 
-        <h2 className="neon-text">SPY LOBBY</h2>
-
-        <p>Players: {playersCount} / {room.config?.maxPlayers || 6}</p>
-
-        <p className="room-id-tag">ROOM ID: {room.id}</p>
-
-      </div>
+  {/* التعديل هنا: الـ ID والأيقونة في سطر واحد وقابل للضغط */}
+  <p 
+   className="room-id-tag" onClick={copyRoomId} style={{ cursor: 'pointer' }}>
+            ROOM ID: {room.id} 📋
+          </p>
+        </div>
 
 
 
@@ -368,7 +374,12 @@ if (!room || !player) return <div>Loading...</div>;
 
           if (p.isReady) avatarBg = "rgba(34, 197, 94, 0.5)"; // لون اللي استعد (أخضر)
 
-{isThisPlayerOwner && !isThisPlayerMe && (
+
+
+          return (
+
+            <div key={i} className={`player-card ${p.isReady ? "ready-mode" : ""}`}>
+              {isThisPlayerOwner && !isThisPlayerMe && (
   <button 
     className="kick-btn" 
     onClick={() => socket.send(JSON.stringify({ 
@@ -381,10 +392,6 @@ if (!room || !player) return <div>Loading...</div>;
     ➖
   </button>
 )}
-
-          return (
-
-            <div key={i} className={`player-card ${p.isReady ? "ready-mode" : ""}`}>
 
               <div className="avatar-box" style={{ backgroundColor: avatarBg, borderRadius: '50%', padding: '10px' }}>
 

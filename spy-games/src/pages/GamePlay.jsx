@@ -10,7 +10,7 @@ function GamePlay({ room, player, socket }) {
   const [currentTurn, setCurrentTurn] = useState(room.turnOrder[0]);
   const [timer, setTimer] = useState(20);
   const [showCard, setShowCard] = useState(true);
-
+  
   const tickSound = useRef(new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"));
   const chatEndRef = useRef(null);
 
@@ -19,6 +19,18 @@ function GamePlay({ room, player, socket }) {
   }, [chatLog]);
 
 
+
+
+
+
+
+
+
+
+
+
+
+  
 
 
 

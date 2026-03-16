@@ -751,3 +751,96 @@ input:focus {
   transform: translateY(-5px);
 }
 
+.room-id-tag {
+  background: #ff00e0; /* المربع الأحمر اللي عندك */
+  color: white;
+  padding: 10px 25px;
+  border-radius: 50px;
+  font-weight: bold;
+  display: inline-flex; /* أهم خاصية عشان يفضلوا جنب بعض */
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* المسافة بين الـ ID والأيقونة */
+     box-shadow: 0 0 14px #ff00e0;
+  transition: 0.2s;
+ 
+}
+
+.room-id-tag:active {
+  transform: scale(0.98); /* تأثير بسيط عند الضغط */
+  background: #cc0000;
+}
+
+/* حل مشكلة الكتابة العربية المعكوسة */
+input, .msg-bubble, .player-name {
+  direction: rtl;
+  unicode-bidi: plaintext;
+  text-align: right;
+}
+
+/* كارت الأونر نيون أزرق في اللوبي */
+.owner-card {
+  border: 2px solid #00eaff !important;
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.5) !important;
+}
+
+/* تصميم الموبايل */
+@media (max-width: 768px) {
+  .gameplay-container {
+    flex-direction: column;
+    height: calc(100vh - 60px);
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 80px;
+    border-right: none;
+    border-bottom: 1px solid #00eaff;
+    flex-direction: row;
+    padding: 5px;
+  }
+
+  .player-list {
+    display: flex;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .player-item {
+    min-width: 80px;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 12px;
+  }
+
+  .chat-section {
+    flex: 1;
+  }
+
+  .msg-bubble {
+    max-width: 90%;
+    font-size: 14px;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #0b161a;
+  }
+}
+
+/* زر الحذف (-) للأونر في اللوبي */
+.kick-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 20;
+}
