@@ -6,7 +6,7 @@ import GamePlay from "./pages/GamePlay";
 import CodenamesGame from "./pages/Codenames";
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
-const socket = new WebSocket("wss://partygames-siup6ywr.b4a.run");
+const socket = new WebSocket("wss://partygames-7sct3ihl.b4a.run");
 
 
 function App() {
