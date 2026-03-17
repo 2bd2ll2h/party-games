@@ -6,7 +6,7 @@ import GamePlay from "./pages/GamePlay";
 import CodenamesGame from "./pages/Codenames";
 import "./App.css";
 // استبدل السطر القديم بالسطر ده
-const socket = new WebSocket("wss://partygames-nt9gablt.b4a.run");
+const socket = new WebSocket("wss://partygames-19ulsm1f.b4a.run");
 
 
 
@@ -28,21 +28,11 @@ socket.onmessage = (event) => {
   setRoom(data.room);
   setPage("lobby"); // تأكيد الانتقال للوبي عند الإنشاء
   break;
-  case "roomUpdate":
-  // 1. تحديث بيانات الغرفة في الـ State
+case "roomUpdate":
   setRoom(data.room);
-
-  // 2. التحقق من حالة اللعبة للتوجيه الصحيح
-  if (!data.room.gameStarted) {
-    // لو اللعبة لسه مابدأتش أو خلصت ورجعنا للانتظار
-    // اتأكد إننا بنحول الصفحة لـ lobby لو كنا في صفحات الـ Join أو الـ Create
-    if (page === "joinRoom" || page === "createRoom" || page === "gamePlay") {
-       setPage("lobby");
-    }
-  } else if (data.room.gameStarted && page !== "gamePlay") {
-    // حالة احتياطية: لو اللعبة بدأت فعلاً وأنا لسه في اللوبي (مثلاً النت كان بطيء)
-    // حولني لصفحة اللعب فوراً
-    setPage("gamePlay");
+  // لو استلمنا تحديث للغرفة وإحنا مش في صفحة اللعب.. انقلنا للوبي فوراً
+  if (page !== "gamePlay") {
+      setPage("lobby");
   }
   break;
 
