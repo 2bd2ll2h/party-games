@@ -135,54 +135,87 @@ if (page === "setup") {
 
 
   
+
+
+
+
+
+
+
   
 if (page === "createRoom") {
+  // شروط الإعدادات بناءً على نوع اللعبة
+  const isCodenames = gameType === "codenames";
+
   return (
- 
     <div className="create-room-page">
       <div className="glass-card">
-      
-
-
-
-
-
-
-      
-        <h2 style={{color: 'var(--accent-color)'}}> ROOM SETTING </h2>
+        <h2 style={{ color: 'var(--accent-color)' }}>
+          {isCodenames ? "CODE GAME SETTINGS" : "SPY GAME SETTINGS"}
+        </h2>
+        
         <div className="input-group">
-          <label>Round Numbers(1 - 3)</label>
+          {/* إعدادات الجولات تظهر فقط في لعبة Spy */}
+          {!isCodenames && (
+            <>
+              <label>Round Numbers (1 - 3)</label>
+              <input 
+                type="number" 
+                defaultValue="1" 
+                id="room-rounds" 
+                min="1" 
+                max="3" 
+              />
+            </>
+          )}
+
+          {/* إعدادات مشتركة أو خاصة بـ Code Game */}
+          <label>Max players ({isCodenames ? "4 - 12" : "3 - 10"})</label>
           <input 
             type="number" 
-            defaultValue="1" 
-            id="room-rounds" 
-            min="1" 
-            max="3" 
-            onInput={(e) => { if(e.target.value > 3) e.target.value = 3; if(e.target.value < 1) e.target.value = 1; }}
-          />
-          
-          <label>Max players (3 - 10)</label>
-          <input 
-            type="number" 
-            defaultValue="6" 
+            defaultValue={isCodenames ? "8" : "6"} 
             id="room-max" 
-            min="3" 
-            max="10" 
-            onInput={(e) => { if(e.target.value > 10) e.target.value = 10; if(e.target.value < 3) e.target.value = 3; }}
+            min={isCodenames ? "4" : "3"} 
+            max={isCodenames ? "12" : "10"} 
           />
+
+          {isCodenames && (
+            <>
+              <label>Word Language</label>
+              <select id="room-lang" className="game-input">
+                <option value="ar">العربية 🇪🇬</option>
+                <option value="en">English 🇺🇸</option>
+              </select>
+            </>
+          )}
         </div>
+
         <button className="game-btn primary-btn" onClick={() => {
-          const rounds = parseInt(document.getElementById("room-rounds").value);
           const maxPlayers = parseInt(document.getElementById("room-max").value);
           
-          handleCreateRoom({ rounds, maxPlayers });
-        }}> Create ROOM </button>
-        <button className="game-btn secondary-btn" onClick={() => setPage("rooms")}> Cancel </button>
+          let roomSettings = { maxPlayers };
+
+          if (isCodenames) {
+            // منطق Code Game: لا توجد جولات، نرسل إعدادات اللغة مثلاً
+            roomSettings.language = document.getElementById("room-lang").value;
+            roomSettings.rounds = 1; // جولة واحدة مفتوحة
+          } else {
+            // منطق Spy Game
+            roomSettings.rounds = parseInt(document.getElementById("room-rounds").value);
+          }
+          
+          handleCreateRoom(roomSettings);
+        }}> 
+          CREATE {isCodenames ? "CODE" : "SPY"} ROOM 
+        </button>
+        
+        <button className="game-btn secondary-btn" onClick={() => setPage("rooms")}> 
+          Cancel 
+        </button>
       </div>
     </div>
   );
 }
-
 
 
  if (page === "joinRoom") {
