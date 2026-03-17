@@ -70,26 +70,36 @@ wss.on("connection", (ws) => {
           ws.send(JSON.stringify({ type: "roomCreated", room: rooms[roomId] }));
           break;
 
-        case "joinRoom":
-          const targetRoom = rooms[data.roomId];
-          if (targetRoom) {
-            const isNameTaken = targetRoom.players.some(
-              p => p.name.trim().toLowerCase() === data.player.name.trim().toLowerCase()
-            );
+     case "joinRoom":
+  const targetRoom = rooms[data.roomId];
+  if (targetRoom) {
+    // 1. تنظيف الاسم المدخل
+    const newPlayerName = data.player.name.trim().toLowerCase();
 
-            if (isNameTaken) {
-              ws.send(JSON.stringify({ type: "error", message: "الاسم محجوز!" }));
-              return;
-            }
+    // 2. التحقق لو الاسم موجود فعلاً
+    const isNameTaken = targetRoom.players.some(
+      p => p.name.trim().toLowerCase() === newPlayerName
+    );
 
-            targetRoom.players.push({ ...data.player, isReady: false });
-            ws.roomId = data.roomId;
-            ws.playerName = data.player.name;
-            broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
-          } else {
-            ws.send(JSON.stringify({ type: "error", message: "كود الغرفة غير صحيح!" }));
-          }
-          break;
+    if (isNameTaken) {
+      ws.send(JSON.stringify({ type: "error", message: "الاسم محجوز!" }));
+      return;
+    }
+
+    // 3. التحقق من الحد الأقصى للاعبين (إضافة أمان)
+    if (targetRoom.players.length >= (targetRoom.config.maxPlayers || 10)) {
+       ws.send(JSON.stringify({ type: "error", message: "الغرفة ممتلئة!" }));
+       return;
+    }
+
+    targetRoom.players.push({ ...data.player, isReady: false });
+    ws.roomId = data.roomId;
+    ws.playerName = data.player.name;
+    broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
+  } else {
+    ws.send(JSON.stringify({ type: "error", message: "كود الغرفة غير صحيح!" }));
+  }
+  break;
 
         case "toggleReady":
           const roomToToggle = rooms[data.roomId];
@@ -290,7 +300,27 @@ case "revealResults":
   }
   break;
 
-
+// جوه switch (data.type) في السيرفر
+case "leaveRoom":
+    if (ws.roomId && rooms[ws.roomId]) {
+        const room = rooms[ws.roomId];
+        // حذف اللاعب من قائمة اللاعبين
+        room.players = room.players.filter(p => p.name !== ws.playerName);
+        
+        // لو الغرفة فضيت خالص احذفها
+        if (room.players.length === 0) {
+            delete rooms[ws.roomId];
+        } else {
+            // لو الأونر هو اللي خرج انقل الملكية للي بعده
+            if (room.owner === ws.playerName) {
+                room.owner = room.players[0].name;
+            }
+            broadcastToRoom(ws.roomId, { type: "roomUpdate", room: room });
+        }
+    }
+    // أهم سطر: تصفير بيانات السوكيت للاعب
+    ws.roomId = null; 
+    break;
           // جوه switch (data.type)
 
 
@@ -334,6 +364,7 @@ ws.on("close", () => {
         }
         broadcastToRoom(ws.roomId, { type: "roomUpdate", room: room });
       }
+      console.log(`Player ${ws.playerName} disconnected and removed from room ${ws.roomId}`);
     }
   }
 });

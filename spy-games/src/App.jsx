@@ -46,16 +46,16 @@ socket.onmessage = (event) => {
   }
   break;
 
-    case "error":
-      // لو الرسالة فيها كلمة "الاسم"، نرجعه لصفحة الـ setup
-      if (data.message.includes("الاسم")) {
-        alert("⚠️ " + data.message);
-        setPage("setup"); // 🚀 الحركة دي هي اللي هتحل المشكلة
-      } else {
-        alert("⚠️ " + data.message);
-      }
-      break;
-
+  case "error":
+  if (data.message.includes("الاسم")) {
+    alert("⚠️ " + data.message);
+    // تصغير البيانات عشان لما يحاول يدخل تاني يدخل "نضيف"
+    setRoom(null); 
+    setPage("setup"); 
+  } else {
+    alert("⚠️ " + data.message);
+  }
+  break;
 
 
 
