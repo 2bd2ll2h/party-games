@@ -24,11 +24,25 @@ socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
   
   switch (data.type) {
-    case "roomCreated":
-   case "roomUpdate":
+   case "roomCreated":
   setRoom(data.room);
+  setPage("lobby"); // تأكيد الانتقال للوبي عند الإنشاء
+  break;
+  case "roomUpdate":
+  // 1. تحديث بيانات الغرفة في الـ State
+  setRoom(data.room);
+
+  // 2. التحقق من حالة اللعبة للتوجيه الصحيح
   if (!data.room.gameStarted) {
-    setPage("lobby"); // لو السيرفر بعت إن اللعبة مش بدأت، يرجعه اللوبي فوراً
+    // لو اللعبة لسه مابدأتش أو خلصت ورجعنا للانتظار
+    // اتأكد إننا بنحول الصفحة لـ lobby لو كنا في صفحات الـ Join أو الـ Create
+    if (page === "joinRoom" || page === "createRoom" || page === "gamePlay") {
+       setPage("lobby");
+    }
+  } else if (data.room.gameStarted && page !== "gamePlay") {
+    // حالة احتياطية: لو اللعبة بدأت فعلاً وأنا لسه في اللوبي (مثلاً النت كان بطيء)
+    // حولني لصفحة اللعب فوراً
+    setPage("gamePlay");
   }
   break;
 
@@ -90,9 +104,11 @@ socket.onmessage = (event) => {
     }));
   };
 
-  const handleJoinRoom = (roomIdFromInput) => {
-    socket.send(JSON.stringify({ type: "joinRoom", roomId: roomIdFromInput, player }));
-  };
+const handleJoinRoom = (roomIdFromInput) => {
+  if(!roomIdFromInput) return alert("دخل الكود الأول!");
+  socket.send(JSON.stringify({ type: "joinRoom", roomId: roomIdFromInput, player }));
+  // ممكن تصفر الـ input هنا لو محتاج
+};
 
   const handleStartGame = () => {
     socket.send(JSON.stringify({ type: "startGame", roomId: room.id, player }));
@@ -106,6 +122,14 @@ socket.onmessage = (event) => {
       playerName: player.name
     }));
   };
+
+
+
+  const handleLeaveRoom = () => {
+  socket.send(JSON.stringify({ type: "leaveRoom" }));
+  setRoom(null);
+  setPage("menu");
+};
 
   // --- منطق عرض الصفحات ---
 
