@@ -255,40 +255,82 @@ if (page === "lobby") {
 if (!room || !player) return <div>Loading...</div>;
 
   // لو اللعبة هي Code Game، نعرض اللوبي الجديدة
-  if (gameType === "codenames") {
-    return (
-      <div className="lobby-wrapper codenames">
-          {/* هنا طبق كود الـ Teams (يمين وشمال) اللي شرحناه سابقاً */}
-          {/* سأختصر لك الكود هنا لسهولة النسخ */}
-          <div className="teams-grid">
-             <div className="team-column red">
-                <h3>🔴 Red Team</h3>
-                {room.players.filter(p => p.team === "red").map(p => (
-                   <div key={p.name}>{p.name} {p.name === room.owner && "👑"}</div>
-                ))}
-             </div>
-             
-             <div className="waiting-section">
-                <h3>Waiting List</h3>
-                {room.players.filter(p => !p.team).map(p => (
-                   <div key={p.name}>
-                     {p.name}
-                     {player.name === room.owner && <button onClick={() => socket.send(JSON.stringify({type: "assignBlueLeader", roomId: room.id, adminName: player.name, targetName: p.name}))}>Make Blue Leader</button>}
-                   </div>
-                ))}
-             </div>
+if (gameType === "codenames") {
+  const isMainOwner = player.name === room.owner;
+  const isBlueOwner = player.name === room.blueOwner; // غالباً هو نفسه الـ Main Owner
 
-             <div className="team-column blue">
-                <h3>🔵 Blue Team</h3>
-                {room.players.filter(p => p.team === "blue").map(p => (
-                   <div key={p.name}>{p.name} {p.name === room.blueOwner && "⭐"}</div>
-                ))}
-             </div>
-          </div>
-          {player.name === room.owner && <button onClick={handleStartGame}>START CODE GAME</button>}
+  return (
+    <div className="lobby-wrapper codenames-lobby">
+      {/* 1. القائمة الجانبية (قائمة الانتظار) */}
+      <div className="sidebar-waiting">
+        <h3>📥 Waiting List</h3>
+        <div className="waiting-list">
+          {room.players.filter(p => !p.team).map(p => (
+            <div key={p.name} className="waiting-player-card">
+              <span>{p.avatar} {p.name}</span>
+              {isMainOwner && (
+                <div className="admin-actions">
+                  <button className="mini-btn blue" onClick={() => socket.send(JSON.stringify({type: "assignBlueLeader", roomId: room.id, adminName: player.name, targetName: p.name}))}>👤 Team Red Leader</button>
+                  <button className="kick-btn-small" onClick={() => socket.send(JSON.stringify({type: "kickPlayer", roomId: room.id, adminName: player.name, targetName: p.name}))}>➖</button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    );
-  }
+
+      {/* 2. منطقة الفريقين (الأساسية) */}
+      <div className="teams-container">
+        <h2 className="neon-text-small">CODE GAME TEAMS</h2>
+        <p className="room-id-tag" onClick={copyRoomId}>ID: {room.id} 📋</p>
+        
+        <div className="teams-split">
+          {/* الفريق الأحمر */}
+          <div className="team-box red-team">
+            <div className="team-header">🔴 RED TEAM</div>
+            <div className="team-players">
+              {room.players.filter(p => p.team === "red").map(p => (
+                <div key={p.name} className={`player-mini-card ${p.name === room.blueOwner ? "team-leader-border" : ""}`}>
+                  {isMainOwner && p.name !== player.name && (
+                    <button className="kick-btn-abs" onClick={() => socket.send(JSON.stringify({type: "kickPlayer", roomId: room.id, adminName: player.name, targetName: p.name}))}>➖</button>
+                  )}
+                  {/* أونر الأحمر يطرد فريقه فقط */}
+                  {player.name === room.blueOwner && p.name !== player.name && !isMainOwner && (
+                     <button className="kick-btn-abs" onClick={() => socket.send(JSON.stringify({type: "kickPlayer", roomId: room.id, adminName: player.name, targetName: p.name}))}>➖</button>
+                  )}
+                  <span className="p-avatar">{p.avatar}</span>
+                  <span className="p-name">{p.name} {p.name === room.blueOwner && "⭐"}</span>
+                </div>
+              ))}
+              <button className="join-team-btn" onClick={() => socket.send(JSON.stringify({type: "joinTeam", roomId: room.id, playerName: player.name, team: "red"}))}>Join Red</button>
+            </div>
+          </div>
+
+          {/* الفريق الأزرق */}
+          <div className="team-box blue-team">
+            <div className="team-header">🔵 BLUE TEAM</div>
+            <div className="team-players">
+              {room.players.filter(p => p.team === "blue").map(p => (
+                <div key={p.name} className={`player-mini-card ${p.name === room.owner ? "main-owner-border" : ""}`}>
+                  {isMainOwner && p.name !== player.name && (
+                    <button className="kick-btn-abs" onClick={() => socket.send(JSON.stringify({type: "kickPlayer", roomId: room.id, adminName: player.name, targetName: p.name}))}>➖</button>
+                  )}
+                  <span className="p-avatar">{p.avatar}</span>
+                  <span className="p-name">{p.name} {p.name === room.owner && "👑"}</span>
+                </div>
+              ))}
+              <button className="join-team-btn" onClick={() => socket.send(JSON.stringify({type: "joinTeam", roomId: room.id, playerName: player.name, team: "blue"}))}>Join Blue</button>
+            </div>
+          </div>
+        </div>
+
+        {isMainOwner && (
+          <button className="start-btn-codenames" onClick={handleStartGame}>START MISSION 🚀</button>
+        )}
+      </div>
+    </div>
+  );
+}
 
   const handleStartWithValidation = () => {
 
