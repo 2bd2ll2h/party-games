@@ -56,8 +56,10 @@ wss.on("connection", (ws) => {
           const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
           rooms[roomId] = {
             id: roomId,
+            gameType: data.gameType,
             owner: data.player.name,
-            players: [{ ...data.player, isReady: true }],
+            blueOwner: null,
+            players: [{ ...data.player, isReady: true  ,  team: data.gameType === "codenames" ? "red" : null }],
             gameStarted: false,
             config: data.config,
             turnOrder: [],
@@ -99,6 +101,31 @@ wss.on("connection", (ws) => {
             }
           }
           break;
+          // تعيين القائد الأزرق
+case "assignBlueLeader":
+    const rC = rooms[data.roomId];
+    if (rC && rC.owner === data.adminName) {
+        const target = rC.players.find(p => p.name === data.targetName);
+        if (target) {
+            rC.blueOwner = target.name;
+            target.team = "blue";
+            target.isReady = true;
+            broadcastToRoom(data.roomId, { type: "roomUpdate", room: rC });
+        }
+    }
+    break;
+
+// انضمام لاعب لفريق
+case "joinTeam":
+    const roomT = rooms[data.roomId];
+    if (roomT && roomT.gameType === "codenames") {
+        const p = roomT.players.find(player => player.name === data.playerName);
+        if (p) {
+            p.team = data.team; // 'red' or 'blue'
+            broadcastToRoom(data.roomId, { type: "roomUpdate", room: roomT });
+        }
+    }
+    break;
 
         case "startGame":
           const roomToStart = rooms[data.roomId];
@@ -158,7 +185,7 @@ wss.on("connection", (ws) => {
 
 
           case "kickPlayer":
-  const roomToKick = rooms[data.roomId];
+  /*const roomToKick = rooms[data.roomId];
   if (roomToKick && roomToKick.owner === data.adminName) {
     roomToKick.players = roomToKick.players.filter(p => p.name !== data.targetName);
     broadcastToRoom(data.roomId, { type: "roomUpdate", room: roomToKick });
@@ -166,7 +193,35 @@ wss.on("connection", (ws) => {
     wss.clients.forEach(client => {
       if (client.roomId === data.roomId && client.playerName === data.targetName) {
         client.send(JSON.stringify({ type: "kicked" }));
-        client.roomId = null; // فصله عن الغرفة
+        client.roomId = null; // فصله عن الغرفة*/
+
+const roomK = rooms[data.roomId];
+    if (!roomK) break;
+
+    const isMainOwner = roomK.owner === data.adminName;
+    const isBlueOwner = roomK.blueOwner === data.adminName;
+    const targetP = roomK.players.find(p => p.name === data.targetName);
+
+    let canKick = false;
+    if (roomK.gameType === "spy") {
+        canKick = isMainOwner; // في الجاسوس، الأونر فقط يطرد
+    } else {
+        // في كود جيم: الأونر الأساسي يطرد أي حد، الأونر الأزرق يطرد فريقه فقط
+        canKick = isMainOwner || (isBlueOwner && targetP.team === "blue");
+    }
+
+    if (canKick) {
+        roomK.players = roomK.players.filter(p => p.name !== data.targetName);
+        if (roomK.blueOwner === data.targetName) roomK.blueOwner = null;
+        broadcastToRoom(data.roomId, { type: "roomUpdate", room: roomK });
+        // إرسال تنبيه للمطرود
+        wss.clients.forEach(c => {
+            if (c.roomId === data.roomId && c.playerName === data.targetName) {
+                c.send(JSON.stringify({ type: "kicked" }));
+                c.roomId = null;
+
+
+
       }
     });
   }
@@ -246,21 +301,42 @@ case "revealResults":
     }
   });
 
-  ws.on("close", () => {
-    if (ws.roomId && rooms[ws.roomId]) {
-      const room = rooms[ws.roomId];
+ws.on("close", () => {
+  if (ws.roomId && rooms[ws.roomId]) {
+    const room = rooms[ws.roomId];
+    
+    // إذا كانت اللعبة شغال وفيه حد خرج
+    if (room.gameStarted) {
+      const isSpyLeaving = (ws.playerName === room.spyName);
+
+      if (isSpyLeaving) {
+        // لو الجاسوس خرج.. نرجع الكل للوبي فوراً
+        room.gameStarted = false;
+        broadcastToRoom(ws.roomId, { 
+          type: "chatMessage", 
+          payload: { user: "SYSTEM", text: `الجاسوس ${ws.playerName} هرب! العودة للانتظار...` } 
+        });
+        broadcastToRoom(ws.roomId, { type: "roomUpdate", room: room });
+      } else {
+        // لو لاعب عادي خرج.. نحذفه من الترتيب ونكمل
+        room.turnOrder = room.turnOrder.filter(name => name !== ws.playerName);
+        room.players = room.players.filter(p => p.name !== ws.playerName);
+        broadcastToRoom(ws.roomId, { type: "gameInfoUpdate", room: room });
+      }
+    } else {
+      // المنطق القديم للوبي
       room.players = room.players.filter(p => p.name !== ws.playerName);
       if (room.players.length === 0) {
         delete rooms[ws.roomId];
       } else {
         if (room.owner === ws.playerName) {
           room.owner = room.players[0].name;
-          room.players[0].isReady = true;
         }
         broadcastToRoom(ws.roomId, { type: "roomUpdate", room: room });
       }
     }
-  });
+  }
+});
 });
 
 function broadcastToRoom(roomId, message) {
