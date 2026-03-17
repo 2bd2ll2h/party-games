@@ -41,6 +41,14 @@ let rooms = {};
 
 
 wss.on("connection", (ws) => {
+
+
+
+
+
+
+
+  ws.on("error", console.error); // عشان السيرفر ميكراشش لو سوكيت فصل فجأة
   console.log("New client connected");
 
   ws.on("message", (message) => {
@@ -71,35 +79,45 @@ wss.on("connection", (ws) => {
           break;
 
      case "joinRoom":
-  const targetRoom = rooms[data.roomId];
-  if (targetRoom) {
-    // 1. تنظيف الاسم المدخل
-    const newPlayerName = data.player.name.trim().toLowerCase();
+    const targetRoom = rooms[data.roomId];
+    if (targetRoom) {
+        const incomingName = data.player.name.trim();
 
-    // 2. التحقق لو الاسم موجود فعلاً
-    const isNameTaken = targetRoom.players.some(
-      p => p.name.trim().toLowerCase() === newPlayerName
-    );
+        // 1. البحث عن اللاعب لو كان موجود أصلاً في الغرفة (عشان لو عمل ريفريش)
+        const existingPlayerIndex = targetRoom.players.findIndex(
+            p => p.name.trim().toLowerCase() === incomingName.toLowerCase()
+        );
 
-    if (isNameTaken) {
-      ws.send(JSON.stringify({ type: "error", message: "الاسم محجوز!" }));
-      return;
+        if (existingPlayerIndex !== -1) {
+            // لو الاسم موجود.. هل هو نفس الشخص اللي بيحاول يدخل؟ 
+            // هنحدث السوكيت والبيانات ونرجعه اللوبي بدل ما نقوله "محجوز"
+            ws.roomId = data.roomId;
+            ws.playerName = incomingName;
+            
+            // نبعتله بيانات الغرفة فوراً
+            ws.send(JSON.stringify({ type: "roomUpdate", room: targetRoom }));
+            
+            // نحدث الباقي إن فيه حد دخل/رجع
+            broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
+            return;
+        }
+
+        // 2. لو الاسم فعلاً جديد.. نتأكد إن الغرفة مش مليانة
+        if (targetRoom.players.length >= (targetRoom.config.maxPlayers || 10)) {
+            ws.send(JSON.stringify({ type: "error", message: "الغرفة ممتلئة!" }));
+            return;
+        }
+
+        // 3. إضافة لاعب جديد بشكل طبيعي
+        targetRoom.players.push({ ...data.player, isReady: false });
+        ws.roomId = data.roomId;
+        ws.playerName = incomingName;
+        broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
+
+    } else {
+        ws.send(JSON.stringify({ type: "error", message: "كود الغرفة غير صحيح!" }));
     }
-
-    // 3. التحقق من الحد الأقصى للاعبين (إضافة أمان)
-    if (targetRoom.players.length >= (targetRoom.config.maxPlayers || 10)) {
-       ws.send(JSON.stringify({ type: "error", message: "الغرفة ممتلئة!" }));
-       return;
-    }
-
-    targetRoom.players.push({ ...data.player, isReady: false });
-    ws.roomId = data.roomId;
-    ws.playerName = data.player.name;
-    broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
-  } else {
-    ws.send(JSON.stringify({ type: "error", message: "كود الغرفة غير صحيح!" }));
-  }
-  break;
+    break;
 
         case "toggleReady":
           const roomToToggle = rooms[data.roomId];
