@@ -45,6 +45,7 @@ const copyRoomId = () => {
 socket.onmessage = (event) => {
 
   const data = JSON.parse(event.data);
+  console.log("Message from server:", data);
 
  
 
@@ -56,6 +57,8 @@ socket.onmessage = (event) => {
     
   case "roomUpdate":
   setRoom(data.room);
+  setGameType(data.room.gameType);
+  
   // لو السيرفر بعت تحديث إن اللعبة مأبدأتش (gameStarted: false) 
   // وإحنا كنا جوه الجيم، نرجعه اللوبي فوراً
   if (!data.room.gameStarted && page === "gamePlay") {
@@ -164,7 +167,7 @@ case "roomCreated":
 
 
 
-  }, []);
+  }, [  page]);
 
 
 
@@ -185,12 +188,17 @@ case "roomCreated":
   };
 
 
-
-  const handleJoinRoom = (roomIdFromInput) => {
-
-    socket.send(JSON.stringify({ type: "joinRoom", roomId: roomIdFromInput, player }));
-
-  };
+const handleJoinRoom = (roomIdFromInput) => {
+  if (!player) {
+    setPage("setup"); // لو مفيش بيانات لاعب وديه لصفحة الاسم الأول
+    return;
+  }
+  socket.send(JSON.stringify({ 
+    type: "joinRoom", 
+    roomId: roomIdFromInput, 
+    player: player // تأكد أن الـ player هنا فيه الاسم والأفاتار
+  }));
+};
 
 
 
