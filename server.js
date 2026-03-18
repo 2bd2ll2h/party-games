@@ -61,7 +61,7 @@ const wordsBank = ["بيتزا", "طيارة", "موبايل", "كورة", "قه
 let rooms = {};
 
 
-
+let disconnectTimeouts = {}; // لتخزين عدادات الانتظار لكل غرفة
 
 
 
@@ -141,47 +141,68 @@ wss.on("connection", (ws) => {
           break;
 
 
+case "joinRoom":
+    const targetRoom = rooms[data.roomId];
+    if (!targetRoom) {
+        ws.send(JSON.stringify({ type: "error", message: "كود الغرفة غير صحيح!" }));
+        break;
+    }
 
-        case "joinRoom":
+    const incomingName = data.player.name.trim();
 
-          const targetRoom = rooms[data.roomId];
+    // 1. التحقق من حالة الغرفة (مغلقة لو اللعبة بدأت ولاعب جديد حاول يدخل)
+    if (targetRoom.gameStarted) {
+        const isReturningPlayer = targetRoom.players.some(p => p.name === incomingName);
+        if (!isReturningPlayer) {
+            ws.send(JSON.stringify({ type: "error", message: "المهمة بدأت بالفعل! الغرفة مغلقة حالياً." }));
+            break;
+        }
+    }
 
-          if (targetRoom) {
+    // 2. معالجة اللاعب اللي موجود أصلاً (Refresh أو Reconnect)
+    const existingPlayer = targetRoom.players.find(p => p.name === incomingName);
+    
+    if (existingPlayer) {
+        // ✅ [إضافة] إلغاء تايمر الهروب لو كان اللاعب هو الجاسوس ورجع قبل الـ 15 ثانية
+        if (disconnectTimeouts[data.roomId]) {
+            clearTimeout(disconnectTimeouts[data.roomId]);
+            delete disconnectTimeouts[data.roomId];
+            console.log(`✅ تم إلغاء تايمر الهروب، اللاعب ${incomingName} عاد للعب.`);
+        }
 
-            const isNameTaken = targetRoom.players.some(
+        // تحديث بيانات السوكيت للاعب
+        ws.roomId = data.roomId;
+        ws.playerName = incomingName;
 
-              p => p.name.trim().toLowerCase() === data.player.name.trim().toLowerCase()
+        // إرجاعه لمكانه الصحيح بناءً على حالة اللعبة
+        if (targetRoom.gameStarted) {
+            const isSpy = incomingName === targetRoom.spyName;
+            ws.send(JSON.stringify({
+                type: "gameStarted",
+                word: isSpy ? " you are the spy 🕵️" : targetRoom.word,
+                isSpy: isSpy,
+                room: targetRoom
+            }));
+        } else {
+            ws.send(JSON.stringify({ type: "roomUpdate", room: targetRoom }));
+        }
+        return; // إنهاء الحالة هنا لأن اللاعب تم معالجته
+    }
 
-            );
+    // 3. إضافة لاعب جديد تماماً (لو اللعبة لسه مابدأتش)
+    if (targetRoom.players.length >= (targetRoom.config?.maxPlayers || 10)) {
+        ws.send(JSON.stringify({ type: "error", message: "الغرفة ممتلئة!" }));
+        break;
+    }
 
-
-
-            if (isNameTaken) {
-
-              ws.send(JSON.stringify({ type: "error", message: "الاسم محجوز!" }));
-
-              return;
-
-            }
-
-
-
-            targetRoom.players.push({ ...data.player, isReady: false });
-
-            ws.roomId = data.roomId;
-
-            ws.playerName = data.player.name;
-
-            broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
-
-          } else {
-
-            ws.send(JSON.stringify({ type: "error", message: "كود الغرفة غير صحيح!" }));
-
-          }
-
-          break;
-
+    // إضافة اللاعب الجديد للغرفة وتحديث الـ Socket
+    ws.roomId = data.roomId;
+    ws.playerName = incomingName;
+    targetRoom.players.push({ ...data.player, isReady: false });
+    
+    // إبلاغ الجميع بانضمام لاعب جديد
+    broadcastToRoom(data.roomId, { type: "roomUpdate", room: targetRoom });
+    break;
 
 
         case "toggleReady":
@@ -605,74 +626,55 @@ case "revealResults":
 
 
 ws.on("close", () => {
+    if (ws.roomId && rooms[ws.roomId]) {
+        const room = rooms[ws.roomId];
+        const rId = ws.roomId;
 
-  if (ws.roomId && rooms[ws.roomId]) {
+        // 1. لو اللعبة لسه مابدأتش (في اللوبي) - خروج نهائي
+        if (!room.gameStarted) {
+            room.players = room.players.filter(p => p.name !== ws.playerName);
+            if (room.players.length === 0) {
+                delete rooms[rId];
+            } else {
+                if (room.owner === ws.playerName) room.owner = room.players[0].name;
+                broadcastToRoom(rId, { type: "roomUpdate", room: room });
+            }
+        } 
+        
+        // 2. لو اللعبة شغال (Game Started) - انتظار الجاسوس
+        else {
+            const isSpyLeaving = (ws.playerName === room.spyName);
 
-    const room = rooms[ws.roomId];
+            if (isSpyLeaving) {
+                console.log(`الجاسوس ${ws.playerName} فصل.. بدأت مهلة 15 ثانية للعودة.`);
+                
+                // نبدأ عد تنازلي: لو مرجعش في 15 ثانية، نلغي الجيم
+                disconnectTimeouts[rId] = setTimeout(() => {
+                    if (rooms[rId] && rooms[rId].gameStarted) {
+                        rooms[rId].gameStarted = false;
+                        broadcastToRoom(rId, { 
+                            type: "chatMessage", 
+                            payload: { user: "SYSTEM", text: `الجاسوس ${ws.playerName} هرب ولم يعد! العودة للانتظار...` } 
+                        });
+                        broadcastToRoom(rId, { type: "roomUpdate", room: rooms[rId] });
+                    }
 
-    
-
-    // إذا كانت اللعبة شغال وفيه حد خرج
-
-    if (room.gameStarted) {
-
-      const isSpyLeaving = (ws.playerName === room.spyName);
-
-
-
-      if (isSpyLeaving) {
-
-        // لو الجاسوس خرج.. نرجع الكل للوبي فوراً
-
-        room.gameStarted = false;
-
-        broadcastToRoom(ws.roomId, { 
-
-          type: "chatMessage", 
-
-          payload: { user: "SYSTEM", text: `الجاسوس ${ws.playerName} هرب! العودة للانتظار...` } 
-
-        });
-
-        broadcastToRoom(ws.roomId, { type: "roomUpdate", room: room });
-
-      } else {
-
-        // لو لاعب عادي خرج.. نحذفه من الترتيب ونكمل
-
-        room.turnOrder = room.turnOrder.filter(name => name !== ws.playerName);
-
-        room.players = room.players.filter(p => p.name !== ws.playerName);
-
-        broadcastToRoom(ws.roomId, { type: "gameInfoUpdate", room: room });
-
-      }
-
-    } else {
-
-      // المنطق القديم للوبي
-
-      room.players = room.players.filter(p => p.name !== ws.playerName);
-
-      if (room.players.length === 0) {
-
-        delete rooms[ws.roomId];
-
-      } else {
-
-        if (room.owner === ws.playerName) {
-
-          room.owner = room.players[0].name;
+                 
+                    delete disconnectTimeouts[rId];  }, 20000); 
+            }
 
         }
 
-        broadcastToRoom(ws.roomId, { type: "roomUpdate", room: room });
 
-      }
+
+
+
+
+
+        
+        
 
     }
-
-  }
 
 });
 
