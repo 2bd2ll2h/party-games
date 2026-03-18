@@ -14,7 +14,7 @@ import "./App.css";
 
 // استبدل السطر القديم بالسطر ده
 
-const socket = new WebSocket("wss://partygames-nt9gablt.b4a.run");
+const socket = new WebSocket("wss://partygames-d8zzhryo.b4a.run");
 
 
 
