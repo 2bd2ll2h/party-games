@@ -14,7 +14,7 @@ import "./App.css";
 
 // استبدل السطر القديم بالسطر ده
 
-const socket = new WebSocket("wss://partygames-dwh26nu7.b4a.run");
+const socket = new WebSocket("wss://partygames-nt9gablt.b4a.run");
 
 
 
@@ -45,32 +45,25 @@ const copyRoomId = () => {
 socket.onmessage = (event) => {
 
   const data = JSON.parse(event.data);
-  console.log("Message from server:", data);
 
  
 
   switch (data.type) {
 
+    case "roomCreated":
 
+   case "roomUpdate":
 
-
-    
-  case "roomUpdate":
   setRoom(data.room);
-  setGameType(data.room.gameType);
-  
-  // لو السيرفر بعت تحديث إن اللعبة مأبدأتش (gameStarted: false) 
-  // وإحنا كنا جوه الجيم، نرجعه اللوبي فوراً
-  if (!data.room.gameStarted && page === "gamePlay") {
-      setPage("lobby");
-      alert("⚠️ الجاسوس هرب! تم إلغاء المهمة والعودة للانتظار.");
+
+  if (!data.room.gameStarted) {
+
+    setPage("lobby"); // لو السيرفر بعت إن اللعبة مش بدأت، يرجعه اللوبي فوراً
+
   }
+
   break;
 
-case "roomCreated":
-    setRoom(data.room);
-    setPage("lobby");
-    break;
 
 
     case "error":
@@ -167,7 +160,7 @@ case "roomCreated":
 
 
 
-  }, [  page]);
+  }, []);
 
 
 
@@ -188,17 +181,12 @@ case "roomCreated":
   };
 
 
-const handleJoinRoom = (roomIdFromInput) => {
-  if (!player) {
-    setPage("setup"); // لو مفيش بيانات لاعب وديه لصفحة الاسم الأول
-    return;
-  }
-  socket.send(JSON.stringify({ 
-    type: "joinRoom", 
-    roomId: roomIdFromInput, 
-    player: player // تأكد أن الـ player هنا فيه الاسم والأفاتار
-  }));
-};
+
+  const handleJoinRoom = (roomIdFromInput) => {
+
+    socket.send(JSON.stringify({ type: "joinRoom", roomId: roomIdFromInput, player }));
+
+  };
 
 
 
