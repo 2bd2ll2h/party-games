@@ -50,20 +50,24 @@ socket.onmessage = (event) => {
 
   switch (data.type) {
 
-    case "roomCreated":
 
-   case "roomUpdate":
 
+
+    
+  case "roomUpdate":
   setRoom(data.room);
-
-  if (!data.room.gameStarted) {
-
-    setPage("lobby"); // لو السيرفر بعت إن اللعبة مش بدأت، يرجعه اللوبي فوراً
-
+  // لو السيرفر بعت تحديث إن اللعبة مأبدأتش (gameStarted: false) 
+  // وإحنا كنا جوه الجيم، نرجعه اللوبي فوراً
+  if (!data.room.gameStarted && page === "gamePlay") {
+      setPage("lobby");
+      alert("⚠️ الجاسوس هرب! تم إلغاء المهمة والعودة للانتظار.");
   }
-
   break;
 
+case "roomCreated":
+    setRoom(data.room);
+    setPage("lobby");
+    break;
 
 
     case "error":

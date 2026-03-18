@@ -109,6 +109,26 @@ const interval = setInterval(() => {
   }));
 };
 
+
+
+
+
+
+
+const handleGoHome = () => {
+    // 1. تصفير الـ States محلياً فوراً
+    setRoom(null);
+    setPage("menu");
+    
+    // 2. إجبار السوكيت إنه ينسى الروم القديمة (اختياري بس بيحل مشاكل كتير)
+    if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ type: "leaveRoom" })); 
+    }
+    
+    // 3. ريفريش خفيف للمتصفح عشان نكسح أي Memory قديمة
+    window.location.reload();
+};
+
   return (
     <div className="gameplay-wrapper">
       {showCard && (
