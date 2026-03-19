@@ -1201,3 +1201,59 @@ input, .msg-bubble, .player-name {
     .player-pyramid-card { width: 55px; }
     .avatar-display { font-size: 1.5rem; }
 }
+
+
+
+
+
+
+
+
+
+
+/* الخلفية المميزة لـ Code Game (تغطية كاملة وشكل جاسوسي) */
+.code-game-exclusive-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
+}
+
+.code-game-exclusive-bg::before {
+    content: ""; position: absolute; width: 100%; height: 100%;
+    background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+    opacity: 0.3;
+}
+
+/* الفاصل اللي طلبت يكون بين الليدر والاعضاء */
+.divider-line {
+    width: 90%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    margin: 15px 0;
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+/* تأكيد بقاء أزرار Join ظاهرة ومنظمة */
+.join-btn-mobile {
+    margin-top: 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.join-btn-mobile:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+/* الـ Grid الأساسي عشان اليمين والشمال يظبطوا */
+.lobby-main-grid {
+    display: flex; flex-direction: row; /* عشان يفضلوا جنب بعض في الموبايل بالترتيب ده */
+    gap: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
